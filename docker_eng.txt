@@ -1,0 +1,76 @@
+1) We create an image based on the Dockerfile and scripts. We place them in one directory, go there and issue the command:
+
+# docker build --progress plain --tag hqb/v30:latest .
+
+what parameters mean
+ 
+ --progress plain     -- optional parameter defining the method for displaying messages about the progress of image creation, can be "auto", "plain", "tty"
+ --tag hqb/v30:latest  -- optional tag 
+ 
+ The period after the space at the end of the command is required!
+ 
+2) If the image was created successfully, it should appear in the list of images
+
+# docker images -a
+REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
+hqb/v3       latest    ad8d98882042   2 minutes ago   1.47GB
+
+3) Launch container from image
+
+# docker run -dit hqb/v30
+
+Start the container from the image and run bash in it
+
+# docker run -dit hqb/v30 /bin/bash
+
+4) Start and stop of the container
+
+# docker start my_container
+# docker stop my_container
+
+Here my_container is a container's identifier, you can get it with the command docker ps -a 
+
+# docker ps -a
+CONTAINER ID   IMAGE     COMMAND            CREATED         STATUS         PORTS                                               NAMES
+8e71ea013fd7   hqb/v30   "/entrypoint.sh"   5 minutes ago   Up 5 minutes   3050/tcp, 3059/tcp, 8082/tcp, 8721/tcp, 40000/tcp  trusting_stonebraker
+
+In this example it would be 8e71ea013fd7. If you have only one container on your system, then instead of the name my_container in the examples, you can use $(docker ps -qa). If there is more than one container, then the expression $(docker ps -qa) will return the id for all containers, i.e. operations will be applied to all containers at once.
+
+5) delete container
+
+# docker rm -v -f my_container
+
+delete all containers
+
+# docker rm -v -f $(docker ps -qa)
+
+6) delete image
+
+# docker rmi my_image
+
+delete all images
+
+# docker rmi $(docker images -qa)
+
+7) Useful commands
+
+execute command inside container
+
+# docker exec -it name_of_container /bin/bash
+
+Copying files inside a container
+
+# docker cp some_files.conf docker_container:/home/docker/
+
+When changing paths, you can copy from the container.
+
+Network addressing =========================
+
+In this example, the host received the address 172.17.0.1, the first container 172.17.0.2
+
+Problems ==================================
+
+Ubuntu in the container could not update, made own dns for it
+
+# cat /etc/default/docker 
+DOCKER_OPTS="--dns 8.8.8.8"

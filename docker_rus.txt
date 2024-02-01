@@ -1,0 +1,75 @@
+1) Создаём образ на основе докерфайла Dockerfile и скриптов. Располагаем их в одном каталоге, переходим туда и даём команду:
+
+# docker build --progress plain --tag hqb/v30:latest .
+
+Здесь 
+ --progress plain     -- необязательный параметр, определяющий метод вывода сообщений о ходе создания образа, могут быть "auto", "plain", "tty"
+ --tag hqb/v30:latest  -- необязательный тег
+ Точка после пробела в конце команды обязательна, обратите на неё внимание
+ 
+2) Если образ создан удачно, он должен появиться при выводе списка образов
+
+# docker images -a
+REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
+hqb/v3       latest    ad8d98882042   2 minutes ago   1.47GB
+
+3) Запустить контейнер из образа
+
+# docker run -dit hqb/v30
+
+Запустить контейнер из образа и запустить в нём bash
+
+# docker run -dit hqb/v30 /bin/bash
+
+4) Старт и останов контейнера
+
+# docker start my_container
+# docker stop my_container
+
+Здесь my_container -- идентификатор контейнера, его можно получить командой docker ps -a 
+
+# docker ps -a
+CONTAINER ID   IMAGE     COMMAND            CREATED         STATUS         PORTS                                               NAMES
+8e71ea013fd7   hqb/v30   "/entrypoint.sh"   5 minutes ago   Up 5 minutes   3050/tcp, 3059/tcp, 8082/tcp, 8721/tcp, 40000/tcp  trusting_stonebraker
+
+В этом примере это будет 8e71ea013fd7. Если у вас в системе только один контейнер, то вместо имени my_container в примерах можно использовать $(docker ps -qa). Если контейнеров более одного, то выражение $(docker ps -qa) вернёт id для всех контейнеров, т.е. операции будут применяться ко всем контейнерам сразу
+
+
+5) Удалить контейнер
+
+# docker rm -v -f my_container
+
+Удалить все контейнеры
+
+# docker rm -v -f $(docker ps -qa)
+
+6) Удалить образ
+
+# docker rmi my_image
+
+Удалить все образы
+
+# docker rmi $(docker images -qa)
+
+7) Необязательно, но может пригодиться:
+
+Зайти в уже запущенный контейнер (точнее, выполнить команду внутри контейнера)
+
+# docker exec -it name_of_container /bin/bash
+
+Копирование файлов внутрь контейнера
+
+# docker cp some_files.conf docker_container:/home/docker/
+
+При смене путей можно копировать из контейнера.
+
+Сетевая адресация =========================
+
+На моём компе хост получал адрес 172.17.0.1, первый контейнер 172.17.0.2
+
+Проблемы ==================================
+
+Убунту в контейнере не мог обновиться, делаем ему свой днс
+
+# cat /etc/default/docker 
+DOCKER_OPTS="--dns 8.8.8.8"
