@@ -1,0 +1,72 @@
+1) Crie uma imagem baseada no Dockerfile e nos scripts. Nós os colocamos em um diretório, vamos lá e damos o comando:
+
+# docker build --progress plain --tag hqb/v30:latest .
+
+aqui 
+ --progress plain     -- um parâmetro opcional que determina o método de exibição de mensagens sobre o andamento da criação da imagem, que pode ser "auto", "plain", "tty"
+ --tag hqb/v30:latest  -- etiqueta opcional
+O ponto final após o espaço no final do comando é obrigatório, preste atenção nele
+ 
+2) Se a imagem foi criada com sucesso, ela deverá aparecer quando a lista de imagens for exibida
+
+# docker images -a
+REPOSITORY   TAG       IMAGE ID       CREATED         SIZE
+hqb/v3       latest    ad8d98882042   2 minutes ago   1.47GB
+
+3) Iniciar contêiner a partir da imagem
+
+# docker run -dit hqb/v30
+
+Inicie o contêiner a partir da imagem e execute o bash nele
+
+# docker run -dit hqb/v30 /bin/bash
+
+4) iniciar/parar
+
+# docker start my_container
+# docker stop my_container
+
+Aqui my_container é o identificador do contêiner, pode ser obtido com o comando docker ps -a 
+
+# docker ps -a
+CONTAINER ID   IMAGE     COMMAND            CREATED         STATUS         PORTS                                               NAMES
+8e71ea013fd7   hqb/v30   "/entrypoint.sh"   5 minutes ago   Up 5 minutes   3050/tcp, 3059/tcp, 8082/tcp, 8721/tcp, 40000/tcp  trusting_stonebraker
+
+Neste exemplo seria 8e71ea013fd7. Se você tiver apenas um contêiner em seu sistema, em vez do nome my_container nos exemplos, você poderá usar $(docker ps -qa). Se houver mais de um contêiner, a expressão $(docker ps -qa) retornará o ID de todos os contêineres, ou seja, as operações serão aplicadas a todos os contêineres de uma só vez
+
+5) Apagar
+# docker rm -v -f my_container
+
+Apagar todos
+
+# docker rm -v -f $(docker ps -qa)
+
+6) Apagar imagem
+
+# docker rmi my_image
+
+Apagar todos
+# docker rmi $(docker images -qa)
+
+7) Opcional, mas pode ser útil:
+
+Insira um contêiner já em execução (mais precisamente, execute um comando dentro do contêiner)
+
+# docker exec -it name_of_container /bin/bash
+
+Copiando arquivos dentro de um contêiner
+
+# docker cp some_files.conf docker_container:/home/docker/
+
+Ao alterar os caminhos, você pode copiar do contêiner.
+
+Endereçamento de rede=========================
+
+No meu computador o host recebeu o endereço 172.17.0.1, o primeiro container 172.17.0.2
+
+Problemas =================================================
+
+O Ubuntu no contêiner não pôde ser atualizado, estamos tornando nosso próprio DNS
+
+# cat /etc/default/docker 
+DOCKER_OPTS="--dns 8.8.8.8"
