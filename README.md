@@ -1,5 +1,6 @@
 # firebird-docker
-== Docker files for Firebird and HQbird
+
+Docker files for Firebird and HQbird
 
 Short instruction how to use Frebird docker
 
