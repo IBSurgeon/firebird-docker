@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FB_VER=4.0
+FB_VER=2.5
 FTP_URL="https://cc.ib-aid.com/download/distr"
 TMP_DIR=$(mktemp -d)
 OLD_DIR=$(pwd -P)
@@ -25,10 +25,11 @@ download_file(){
     esac
 }
 
-apt update 
-apt install --no-install-recommends -y net-tools libtommath1 libicu70 wget unzip gettext libncurses5 curl tar openjdk-8-jre jsvc tzdata locales sudo mc xz-utils file 
-ln -s libtommath.so.1 /usr/lib/x86_64-linux-gnu/libtommath.so.0 
+apt update
+apt install --no-install-recommends -y net-tools libtommath1 libicu70 wget unzip gettext libncurses5 curl tar openjdk-8-jre jsvc tzdata locales sudo mc xz-utils file
+ln -s libtommath.so.1 /usr/lib/x86_64-linux-gnu/libtommath.so.0
 locale-gen "en_US.UTF-8"
+#update-locale LANG="en_US.UTF-8"
 
 ## Firebird & Hqbird download
 download_file $FTP_URL/$FB_VER/fb.tar.xz $TMP_DIR "FB installer"
@@ -49,6 +50,7 @@ echo Running FB installer =====================================================
 yes 'masterkey' | ./install.sh
 #./install.sh -silent
 cd $OLD_DIR
+echo -ne 'thread' | /opt/firebird/bin/changeMultiConnectMode.sh
 cp -rf $TMP_DIR/conf/*.conf /opt/firebird
 
 echo Installing HQbird ========================================================
@@ -92,15 +94,15 @@ echo Registering test database =================================================
 
 mkdir -p /opt/hqbird/conf/agent/servers/hqbirdsrv/databases/test_employee_fdb/
 cp -R /opt/hqbird/conf/.defaults/database4/* /opt/hqbird/conf/agent/servers/hqbirdsrv/databases/test_employee_fdb/
-java -jar /opt/hqbird/dataguard.jar -regdb="/opt/firebird/examples/empbuild/employee.fdb" -srvver=4 -config-directory="/opt/hqbird/conf" -default-output-directory="/opt/hqbird/outdataguard"
+java -jar /opt/hqbird/dataguard.jar -regdb="/opt/firebird/examples/empbuild/employee.fdb" -srvver=2 -config-directory="/opt/hqbird/conf" -default-output-directory="/opt/hqbird/outdataguard"
 rm -rf /opt/hqbird/conf/agent/servers/hqbirdsrv/databases/test_employee_fdb/
+
 
 sed -i 's/db.replication_role=.*/db.replication_role=switchedoff/g' /opt/hqbird/conf/agent/servers/hqbirdsrv/databases/*/database.properties
 sed -i 's/job.enabled.*/job.enabled=false/g' /opt/hqbird/conf/agent/servers/hqbirdsrv/databases/*/jobs/replmon/job.properties
-sed -i 's/^#\s*RemoteAuxPort.*$/RemoteAuxPort = 3059/g' /opt/firebird/firebird.conf
 #sed -i 's/ftpsrv.homedir=/ftpsrv.homedir=\/opt\/database/g' /opt/hqbird/conf/ftpsrv.properties
 sed -i 's/ftpsrv.passivePorts=40000-40005/ftpsrv.passivePorts=40000-40000/g' /opt/hqbird/conf/ftpsrv.properties
-chown -R firebird:firebird /opt/hqbird /opt/firebird/firebird.conf /opt/firebird/databases.conf
+chown -R firebird:firebird /opt/hqbird /opt/firebird/firebird.conf /opt/firebird/aliases.conf
 
 # cleanup
 if [ -d $TMP_DIR ]; then rm -rf $TMP_DIR; fi
