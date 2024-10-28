@@ -9,21 +9,13 @@ ARG TZ UTC
 WORKDIR /opt/hqbird
 ENV PATH=$PATH:/opt/firebird/bin
 
-#RUN locale-gen "en_US.UTF-8" 
-#RUN apt update \
-#    && apt install --no-install-recommends -y net-tools libtommath1 libicu70 wget unzip  gettext libncurses5 curl tar openjdk-8-jre jsvc tzdata #locales sudo mc xz-utils file \
-#    && ln -s libtommath.so.1 /usr/lib/x86_64-linux-gnu/libtommath.so.0 \
-#    && locale-gen "en_US.UTF-8"
-
 COPY ep.sh  /entrypoint.sh
-COPY start_svc.sh /start_svc.sh
 COPY install.sh /install.sh
 
 #COPY ./healthcheck.sh.tpl /healthcheck.sh.tpl
 #COPY ./access.properties.tpl /access.properties.tpl
 
 RUN chmod +x /entrypoint.sh
-RUN chmod +x /start_svc.sh
 RUN chmod +x /install.sh
 
 #CMD ["/bin/bash","-c","/install.sh"]

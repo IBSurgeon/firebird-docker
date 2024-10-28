@@ -6,18 +6,15 @@ ENV LANG=en_US.UTF-8 \
     LC_ALL=en_US.UTF-8 \
     DEBIAN_FRONTEND=noninteractive
 ARG TZ UTC
-WORKDIR /opt/hqbird
 ENV PATH=$PATH:/opt/firebird/bin
 
-COPY ep.sh  /entrypoint.sh
-COPY start_svc.sh /start_svc.sh
+COPY entrypoint.sh  /entrypoint.sh
 COPY install.sh /install.sh
 
 #COPY ./healthcheck.sh.tpl /healthcheck.sh.tpl
 #COPY ./access.properties.tpl /access.properties.tpl
 
 RUN chmod +x /entrypoint.sh
-RUN chmod +x /start_svc.sh
 RUN chmod +x /install.sh
 
 #CMD ["/bin/bash","-c","/install.sh"]
@@ -25,6 +22,6 @@ RUN /install.sh
 RUN rm /install.sh
 #VOLUME /data /opt/hqbird/conf /opt/hqbird/outdataguard
 
-EXPOSE 3050 3059 8082 8083 8721 8765 40000
+EXPOSE 3050 3059
 
 #HEALTHCHECK --start-period=30s --interval=15s --timeout=5s --retries=2 CMD /healthcheck.sh
