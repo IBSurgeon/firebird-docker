@@ -9,7 +9,7 @@ OLD_DIR=$(pwd -P)
 # HQbird =========================
 
 cd /opt/hqbird
-/usr/bin/java -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true -Xms160m -Xmx512m -XX:+UseG1GC -jar dataguard.jar -config-directory=/opt/hqbird/conf -default-output-directory=/opt/hqbird/outdataguard/ &
+/usr/bin/java -Djava.net.preferIPv4Stack=true -Djava.awt.headless=true -Xms128m -Xmx192m -XX:+UseG1GC -jar dataguard.jar -config-directory=/opt/hqbird/conf -default-output-directory=/opt/hqbird/outdataguard/ &
 sleep 5
 
 # AMV ============================
@@ -17,7 +17,7 @@ sleep 5
 unset PID_FILE CLASSPATH DG_OPTS MON4_HOME
 export MON4_HOME=/opt/hqbird/amv
 export PID_FILE=/var/run/fbccamv.pid
-export DG_OPTS="-Djava.net.preferIPv4Stack=true -Xmx256m "
+export DG_OPTS="-Djava.net.preferIPv4Stack=true -Xmx192m "
 export CLASSPATH=$MON4_HOME/amv.jar
 
 cd /opt/hqbird/amv
@@ -29,7 +29,7 @@ sleep 5
 unset PID_FILE CLASSPATH DG_OPTS MON4_HOME
 export MON4_HOME=/opt/hqbird/mon
 export PID_FILE=/var/run/fbcclauncher.pid
-export DG_OPTS="-Djava.net.preferIPv4Stack=true -Xmx256m "
+export DG_OPTS="-Djava.net.preferIPv4Stack=true -Xmx192m "
 export CLASSPATH=$MON4_HOME/bin/fbcclauncher.jar
 
 cd /opt/hqbird/mon/bin
@@ -40,7 +40,7 @@ cd /opt/hqbird/mon/bin
 unset PID_FILE
 export MON4_HOME=/opt/hqbird/mon
 export PID_FILE=/var/run/fbcctracehorse.pid
-export DG_OPTS="-Djava.net.preferIPv4Stack=true -Xmx256m "
+export DG_OPTS="-Djava.net.preferIPv4Stack=true -Xmx192m "
 export CLASSPATH=$MON4_HOME/bin/tracehorse.jar
 
 cd /opt/hqbird/mon/bin
